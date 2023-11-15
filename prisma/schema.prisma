@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Question {
+  id            String    @id @db.VarChar(64)
+  subjectId     String?   @default("001") @db.VarChar(16) @map("kmdm")
+  chapterId     String?   @db.VarChar(2) @map("chapterid")
+  body          String?   @db.MediumText @map("main_part")
+  type          String?   @default("1") @db.VarChar(8) @map("question_type")
+  answer        String?   @db.VarChar(128)
+  explain       String?   @db.MediumText @map("exp")
+  selectA       String?   @db.MediumText @map("select_a")
+  selectB       String?   @db.LongText  @map("select_b")
+  selectC       String?   @db.LongText @map("select_c")
+  selectD       String?   @db.MediumText @map("select_d")
+  selectE       String?   @db.MediumText @map("select_e")
+  selectF       String?   @db.LongText @map("select_f")
+
+  fillcnt       Int?
+  sort          Int       @unique(map: "sort") @default(autoincrement())
+  file_name     String?   @default("") @db.VarChar(128)
+  file_data     Bytes?    @db.MediumBlob
+  update_by     String?   @db.VarChar(64)
+  updateDate    DateTime? @db.Date @map("update_date") 
+  state         String?   @default("0") @db.VarChar(2)
+
+  @@index([type], map: "type")
+
+  @@map("q_question_copy")
+}
