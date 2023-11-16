@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseIntPipe, Res, HttpException, ParseBoolPipe
+} from "@nestjs/common";
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { toNumber } from 'lodash';
 
 @Controller('questions')
 export class QuestionsController {
@@ -13,17 +24,29 @@ export class QuestionsController {
   }
 
   @Get()
-  findAll() {
-    return this.questionsService.findAll();
+  findSome(
+    @Query('subject_id') subjectId: string,
+    @Query('chapter_id') chapterId: string,
+    @Query('order') order: string,
+    @Query('num', ParseIntPipe) num: number,
+  ) {
+
+    if (chapterId && !subjectId) {
+      throw new HttpException("没有包含 _isubjectId 但是包含了 chapter_id", 403);
+    }
+    return this.questionsService.findSome({ subjectId, chapterId, order, num });
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.questionsService.findOne(+id);
+  @Get(':uuid')
+  findOne(@Param('uuid') uuid: string) {
+    return this.questionsService.findOne(uuid);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQuestionDto: UpdateQuestionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateQuestionDto: UpdateQuestionDto,
+  ) {
     return this.questionsService.update(+id, updateQuestionDto);
   }
 
