@@ -7,8 +7,11 @@ import {
   Param,
   Delete,
   Query,
-  ParseIntPipe, Res, HttpException, ParseBoolPipe
-} from "@nestjs/common";
+  ParseIntPipe,
+  Res,
+  HttpException,
+  ParseBoolPipe,
+} from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -30,9 +33,14 @@ export class QuestionsController {
     @Query('order') order: string,
     @Query('num', ParseIntPipe) num: number,
   ) {
+    if (chapterId == '') chapterId = undefined;
+    if (subjectId == '') subjectId = undefined;
 
     if (chapterId && !subjectId) {
-      throw new HttpException("没有包含 _isubjectId 但是包含了 chapter_id", 403);
+      throw new HttpException(
+        '没有包含 _isubjectId 但是包含了 chapter_id',
+        403,
+      );
     }
     return this.questionsService.findSome({ subjectId, chapterId, order, num });
   }
